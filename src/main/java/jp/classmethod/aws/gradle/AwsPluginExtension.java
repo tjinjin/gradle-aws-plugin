@@ -25,6 +25,7 @@ import lombok.Setter;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.plugins.ExtensionAware;
 
 import com.amazonaws.AmazonWebServiceClient;
 import com.amazonaws.ClientConfiguration;
@@ -155,5 +156,12 @@ public class AwsPluginExtension {
 		AWSSecurityTokenService sts = createClient(AWSSecurityTokenServiceClient.class, profileName);
 		sts.setRegion(getActiveRegion(region));
 		return sts.getCallerIdentity(new GetCallerIdentityRequest()).getArn();
+	}
+	
+	public ExtensionAware asExtensionAware() {
+		if (this instanceof ExtensionAware) {
+			return (ExtensionAware) this;
+		}
+		throw new AssertionError();
 	}
 }

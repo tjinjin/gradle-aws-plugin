@@ -24,15 +24,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.gradle.api.GradleException;
-import org.gradle.api.internal.ConventionTask;
 import org.gradle.api.tasks.TaskAction;
 
 import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.google.common.base.Strings;
 
-public class AmazonEC2RunInstanceTask extends ConventionTask {
+import jp.classmethod.aws.gradle.common.BaseAwsTask;
+
+public class AmazonEC2RunInstanceTask extends BaseAwsTask {
 	
 	@Getter
 	@Setter
@@ -67,8 +69,7 @@ public class AmazonEC2RunInstanceTask extends ConventionTask {
 	
 	
 	public AmazonEC2RunInstanceTask() {
-		setDescription("Run EC2 instance.");
-		setGroup("AWS");
+		super("AWS", "Run EC2 instance.");
 	}
 	
 	@TaskAction
@@ -86,7 +87,7 @@ public class AmazonEC2RunInstanceTask extends ConventionTask {
 			throw new GradleException("AMI ID is required");
 		}
 		
-		AmazonEC2PluginExtension ext = getProject().getExtensions().getByType(AmazonEC2PluginExtension.class);
+		AmazonEC2PluginExtension ext = getPluginExtension(AmazonEC2PluginExtension.class);
 		AmazonEC2 ec2 = ext.getClient();
 		
 		RunInstancesRequest request = new RunInstancesRequest()
@@ -104,7 +105,7 @@ public class AmazonEC2RunInstanceTask extends ConventionTask {
 		}
 		runInstancesResult = ec2.runInstances(request);
 		String instanceIds = runInstancesResult.getReservation().getInstances().stream()
-			.map(i -> i.getInstanceId())
+			.map(Instance::getInstanceId)
 			.collect(Collectors.joining(", "));
 		getLogger().info("Run EC2 instance requested: {}", instanceIds);
 	}
