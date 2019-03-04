@@ -150,6 +150,7 @@ public class AwsPluginExtension {
 		try {
 			AWSSecurityTokenService sts = createClient(AWSSecurityTokenServiceClient.class, profileName);
 			sts.setRegion(getActiveRegion(region));
+			sts.setEndpoint("sts.cn-north-1.amazonaws.com.cn");
 			return sts.getCallerIdentity(new GetCallerIdentityRequest()).getAccount();
 		} catch (SdkClientException e) {
 			project.getLogger().lifecycle("AWS credentials not configured!");
@@ -162,6 +163,7 @@ public class AwsPluginExtension {
 		try {
 			AWSSecurityTokenService sts = createClient(AWSSecurityTokenServiceClient.class, profileName);
 			sts.setRegion(getActiveRegion(region));
+			sts.setEndpoint("sts.cn-north-1.amazonaws.com.cn");
 			return sts.getCallerIdentity(new GetCallerIdentityRequest()).getArn();
 		} catch (SdkClientException e) {
 			project.getLogger().lifecycle("AWS credentials not configured!");
